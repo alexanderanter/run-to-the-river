@@ -36,13 +36,8 @@ var resetScore = function() {
     score.innerHTML = 0;
 }
 
-// Enemies our player must avoid
-var Enemy = function(y, speed) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
 
+var Enemy = function(y, speed) {
     this.speed = speed;
     this.sprite = 'images/enemy-bug.png';
     this.x = -80;
@@ -54,9 +49,7 @@ var Enemy = function(y, speed) {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+    // dt ensure the game runs at the same speed for all computers
 
     this.x += this.speed * dt;
 
@@ -79,7 +72,6 @@ Enemy.prototype.update = function(dt) {
         }
     }
 
-
 };
 
 // Draw the enemy on the screen, required method for game
@@ -87,14 +79,15 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-
 var Player = function(playerNumber) {
     this.playerNumber = playerNumber || 0;
+
     if (this.playerNumber % 2 === 0){
         this.sprite = 'images/char-boy.png';
     }else {
         this.sprite = 'images/char-horn-girl.png';
     }
+
     var scoreLabel= document.createElement("span");
     scoreLabel.innerHTML = "player" + playerNumber;
     var para = document.createElement("p");
@@ -139,12 +132,7 @@ Player.prototype.handleInput = function(keys) {
 
 };
 
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
-//intilise the game
+//initialize the game
 var allEnemies = [];
 var allPlayers = [];
 var scoreWrap = document.createElement("div");
@@ -152,8 +140,6 @@ document.body.appendChild(scoreWrap);
 
 genEnemies(5);
 genPlayers(2);
-
-
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -163,7 +149,7 @@ document.addEventListener('keydown', function(e) {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down',
+        40: 'down'
     };
     var allowedKeys2 = {
         87: 'up',
