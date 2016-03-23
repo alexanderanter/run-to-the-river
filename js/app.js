@@ -16,14 +16,22 @@ var genEnemies = function(enemies){
     }
 };
 
+var genPlayers = function(players){
+    var i = 0;
+    for(i; i < players; i++) {
+        new Player(i);
+    }
+
+};
+
 var updateScore = function() {
     this.score += 1;
-    var score = document.getElementById('score');
+    var score = document.getElementById(this.scoreID);
     score.innerHTML = this.score;
 }
 
 var resetScore = function() {
-    var score = document.getElementById('score');
+    var score = document.getElementById(this.scoreID);
     this.score = 0;
     score.innerHTML = 0;
 }
@@ -57,12 +65,12 @@ Enemy.prototype.update = function(dt) {
         this.y = (genRandom(200,50));
     }
 
-    if(this.x < player.x + 60 && this.x > player.x - 60){
-        if(this.y < player.y + 100 && this.y > player.y - 20) {
+    if(this.x < allPlayers[0].x + 60 && this.x > allPlayers[0].x - 60){
+        if(this.y < allPlayers[0].y + 100 && this.y > allPlayers[0].y - 20) {
 
-            player.x = 200;
-            player.y = 420;
-            resetScore.call(player);
+            allPlayers[0].x = 200;
+            allPlayers[0].y = 420;
+            resetScore.call(allPlayers[0]);
         }
     } else {
         console.log("you are safe, for now...");
@@ -79,19 +87,31 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 
-var Player = function() {
-    this.sprite = 'images/char-boy.png';
-    this.x = 200;
+var Player = function(playerNumber) {
+    this.playerNumber = playerNumber || 0;
+    if (this.playerNumber % 2 === 0){
+        this.sprite = 'images/char-boy.png';
+    }else {
+        this.sprite = 'images/char-horn-girl.png';
+    }
+    var para = document.createElement("p");
+    this.scoreID = "score" + playerNumber;
+    para.id = this.scoreID;
+    scoreWrap.appendChild(para);
+    this.x = 200 + (this.playerNumber * 30);
     this.y = 420;
     this.score = 0;
+    this.handleInput();
+    this.update();
+    allPlayers.push(this);
 };
 
 Player.prototype.update = function() {
+    //reach the river
     if(this.y <= 0){
-        console.log("you made it!");
         this.x = 200;
         this.y = 420;
-        updateScore.call(player);
+        updateScore.call(this);
     }
 };
 
@@ -100,7 +120,8 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.handleInput = function(keys) {
-
+    console.log("hm");
+    console.log(keys);
     if (keys === "left") {
         this.x -= 30;
     }else if (keys === "right") {
@@ -119,23 +140,43 @@ Player.prototype.handleInput = function(keys) {
 // Place the player object in a variable called player
 
 var allEnemies = [];
-var player = new Player(4);
+var allPlayers = [];
+var scoreWrap = document.createElement("div");
+document.body.appendChild(scoreWrap);
 
 genEnemies(6);
-player.handleInput();
-player.update(4);
+genPlayers(2);
 
+/*
+player.handleInput();
+player.update();
+
+player2.handleInput();
+player2.update();
+*/
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keydown', function(e) {
-
+    var allowedKeysArr = []
     var allowedKeys = {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
     };
+    var allowedKeys2 = {
+        87: 'up',
+        68: 'right',
+        83: 'down',
+        65: 'left'
+    }
+    allowedKeysArr.push(allowedKeys);
+    allowedKeysArr.push(allowedKeys2);
 
-    player.handleInput(allowedKeys[e.keyCode]);
+    var i;
+    for (i = 0; i < allPlayers.length; i++) {
+        allPlayers[i].handleInput(allowedKeysArr[i][e.keyCode]);
+    }
+
 });
