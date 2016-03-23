@@ -2,8 +2,7 @@
  *@author: alexanderanter
  *version: 1.0.0
  */
-var allEnemies = [];
-var player = new Player(4);
+
 
 var genRandom  = function(maxValue, min) {
     var minValue = 0 || min;
@@ -119,9 +118,13 @@ Player.prototype.handleInput = function(keys) {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+var allEnemies = [];
+var player = new Player(4);
+
 genEnemies(6);
 player.handleInput();
 player.update(4);
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

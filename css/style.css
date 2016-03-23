@@ -1,3 +1,7 @@
 body {
     text-align: center;
 }
+#score {
+    margin: 5px;
+    font-size:70px;
+}
