@@ -65,16 +65,20 @@ Enemy.prototype.update = function(dt) {
         this.y = (genRandom(200,50));
     }
 
-    if(this.x < allPlayers[0].x + 60 && this.x > allPlayers[0].x - 60){
-        if(this.y < allPlayers[0].y + 100 && this.y > allPlayers[0].y - 20) {
+    var i = 0;
+    for(i; i < allPlayers.length; i++){
+        if(this.x < allPlayers[i].x + 60 && this.x > allPlayers[i].x - 60){
+            if(this.y < allPlayers[i].y + 60 && this.y > allPlayers[i].y - 20) {
 
-            allPlayers[0].x = 200;
-            allPlayers[0].y = 420;
-            resetScore.call(allPlayers[0]);
+                allPlayers[i].x = 200;
+                allPlayers[i].y = 420;
+                resetScore.call(allPlayers[i]);
+            }
+        } else {
+            console.log("you are safe, for now...");
         }
-    } else {
-        console.log("you are safe, for now...");
     }
+
 
 };
 
@@ -83,9 +87,6 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
 
 var Player = function(playerNumber) {
     this.playerNumber = playerNumber || 0;
@@ -94,10 +95,14 @@ var Player = function(playerNumber) {
     }else {
         this.sprite = 'images/char-horn-girl.png';
     }
+    var scoreLabel= document.createElement("span");
+    scoreLabel.innerHTML = "player" + playerNumber;
     var para = document.createElement("p");
     this.scoreID = "score" + playerNumber;
     para.id = this.scoreID;
     scoreWrap.appendChild(para);
+    scoreWrap.appendChild(scoreLabel);
+
     this.x = 200 + (this.playerNumber * 30);
     this.y = 420;
     this.score = 0;
@@ -139,21 +144,16 @@ Player.prototype.handleInput = function(keys) {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+//intilise the game
 var allEnemies = [];
 var allPlayers = [];
 var scoreWrap = document.createElement("div");
 document.body.appendChild(scoreWrap);
 
-genEnemies(6);
+genEnemies(5);
 genPlayers(2);
 
-/*
-player.handleInput();
-player.update();
 
-player2.handleInput();
-player2.update();
-*/
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
