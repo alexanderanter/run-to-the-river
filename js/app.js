@@ -9,32 +9,43 @@ var genRandom  = function(maxValue, min) {
     return Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
 };
 
-var genEnemies = function(enemies){
+var genEnemies = function(enemies, speed){
+    var speed = speed || 200;
     var i = 0;
     for(i; i < enemies; i++) {
-        new Enemy(genRandom(200,50), genRandom(400,90));
+        new Enemy(genRandom(200,50), genRandom(speed,30));
     }
 };
 
 var genPlayers = function(players){
     var i = 0;
-    for(i; i < players; i++) {
-        new Player(i);
+    if (players == 1){
+        var singlePlayer = new Player(i);
+        levelUp.call(singlePlayer);
+    }else{
+        for(i; i < players; i++) {
+            new Player(i);
+        }
     }
-
 };
 
 var updateScore = function() {
     this.score += 1;
     var score = document.getElementById(this.scoreID);
-    score.innerHTML = this.score;
-}
+    score.innerHTML = "Score:" + this.score;
+    if(allPlayers.length > 1){
+        levelUp();
+    }
+
+};
 
 var resetScore = function() {
     var score = document.getElementById(this.scoreID);
     this.score = 0;
     score.innerHTML = 0;
-}
+    allEnemies = [];
+    genEnemies(1);
+};
 
 
 var Enemy = function(y, speed) {
@@ -89,7 +100,7 @@ var Player = function(playerNumber) {
     }
 
     var scoreLabel= document.createElement("span");
-    scoreLabel.innerHTML = "player" + playerNumber;
+    scoreLabel.innerHTML = "player" + (playerNumber + 1);
     var para = document.createElement("p");
     this.scoreID = "score" + playerNumber;
     para.id = this.scoreID;
@@ -105,11 +116,18 @@ var Player = function(playerNumber) {
 };
 
 Player.prototype.update = function() {
+    if(this.x > 430){
+        this.x = -30;
+    } else if(this.x < -30) {
+        this.x = 430;
+    }
     //reach the river
     if(this.y <= 0){
         this.x = 200;
         this.y = 420;
         updateScore.call(this);
+    }else if(this.y > 430){
+        this.y = 430;
     }
 };
 
@@ -138,13 +156,32 @@ var allPlayers = [];
 var scoreWrap = document.createElement("div");
 document.body.appendChild(scoreWrap);
 
-genEnemies(5);
-genPlayers(2);
+var gameMode = function(mode){
+   if(mode === "singlePlayer"){
+       genPlayers(1);
+
+   } else {
+       genEnemies(5, 400);
+       genPlayers(2);
+   }
+};
+
+var levelUp = function(){
+    var speed = (allPlayers[0].score * 80) + 100;
+    var i = 0;
+    for(i; i < allEnemies.length; i++){
+        allEnemies[i].speed = 5;
+    }
+    genEnemies(1, speed);
+};
+
+gameMode("sisnglePlayer");
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keydown', function(e) {
-    var allowedKeysArr = []
+    var allowedKeysArr = [];
     var allowedKeys = {
         37: 'left',
         38: 'up',
@@ -156,7 +193,7 @@ document.addEventListener('keydown', function(e) {
         68: 'right',
         83: 'down',
         65: 'left'
-    }
+    };
     allowedKeysArr.push(allowedKeys);
     allowedKeysArr.push(allowedKeys2);
 
